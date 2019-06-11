@@ -11,43 +11,7 @@ source("check_packages.R")
 source("useful_functions.R")
 
 #####################################################
-#. FAO DATA. 
-## I. SYNTHETIC NITROGEN FERTILIZER EMISSIONS (CO2EQ)
-
-sfertCO2eeq <- read_excel("input/FAO/sfertCO2eeq.xlsx")
-
-#) a.0) If needed, Change name "Area" for "Country"
-
-colnames(sfertCO2eeq)[colnames(sfertCO2eeq)=="Area"] <- "Country"
-
-#) a) change to relevant names
-
-##) a.1. Bolivia
-sfertCO2eeq$Country <-gsub("Bolivia (Plurinational State of)", "Bolivia", 
-                           sfertCO2eeq$Country, fixed=TRUE)
-##) a.2. Venezuela
-sfertCO2eeq$Country <-gsub("Venezuela (Bolivarian Republic of)", "Venezuela", 
-                           sfertCO2eeq$Country, fixed=TRUE)
-#) b) Subset to LA relevant countries
-sfertCO2eeq <-subset(sfertCO2eeq, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                       Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                       Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                       Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                       Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                       Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                       Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
-
-#) Remove unnecessary columns
-sfertCO2eeq[,1:3]<- list(NULL)
-sfertCO2eeq[,2:6]<- list(NULL)
-sfertCO2eeq[,3]<- list(NULL)
-sfertCO2eeq[,4:5]<- list(NULL)
-
-##) Put final name to the column:
-
-colnames(sfertCO2eeq) <-c("country","year","sfertCO2eeq")
-
-## II. PRODUCTION. YIELD BY CROP 
+## I. PRODUCTION. YIELD BY CROP 
 
 foodyield <- read_excel("input/FAO/foodyield.xlsx")
 
@@ -83,10 +47,10 @@ foodyield[,5:6]<- list(NULL)
 foodyield <- spread(foodyield, Item, Value)
 
 ##) Put final name to the column:
+foodyield[,5:6]<- list(NULL)
+colnames(foodyield) <-c("country","year","ybeans","ymaize")
 
-colnames(foodyield) <-c("country","year","ybeans","ymaize","yrice","ysgcane")
-
-## III. MACHINERY. AGRIGULTURAL TRACTORS. WB data format.
+## II. MACHINERY. AGRIGULTURAL TRACTORS. WB data format.
 
 tractoruse <- read_excel("input/WB/tractorrel.xls")
 
@@ -96,26 +60,26 @@ tractoruse[,2:5]<- list(NULL)
 tractoruse <- tractoruse[-c(1, 2, 3), ]
 ## C) Change "Data Source" for "Country"
 colnames(tractoruse) <-c("Country", "1961","1962","1963","1964","1965","1966","1967","1968","1969","1970",
-                           "1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981",
-                           "1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992",
-                           "1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003",
-                           "2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014",
-                           "2015","2016","2017")
+                         "1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981",
+                         "1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992",
+                         "1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003",
+                         "2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014",
+                         "2015","2016","2017")
 
 ##) a.1. Bolivia
 tractoruse$Country <-gsub("Bahamas, The", "Bahamas", 
                           tractoruse$Country, fixed=TRUE)
 ##) a.2. Venezuela
 tractoruse$Country <-gsub("Venezuela, RB", "Venezuela", 
-                            tractoruse$Country, fixed=TRUE)
+                          tractoruse$Country, fixed=TRUE)
 #) b) Subset to LA relevant countries
 tractoruse <-subset(tractoruse, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                        Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                        Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                        Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                        Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                        Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                        Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
+                      Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
+                      Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
+                      Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
+                      Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
+                      Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
+                      Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
 
 ##) c) Put in the FAO's column format
 
@@ -124,42 +88,7 @@ tractoruse <-gather(tractoruse, Year, Value, 2:58)
 ## d) Colnames
 colnames(tractoruse) <-c("country","year","tractoruse")
 
-## IV. ENERGY USE IN AGRICULTURE 
-
-Euseagri <- read_excel("input/FAO/Euseagri.xlsx")
-
-#) a.0) If needed, Change name "Area" for "Country"
-
-colnames(Euseagri)[colnames(Euseagri)=="Area"] <- "Country"
-
-#) a) change to relevant names
-
-##) a.1. Bolivia
-Euseagri$Country <-gsub("Bolivia (Plurinational State of)", "Bolivia", 
-                        Euseagri$Country, fixed=TRUE)
-##) a.2. Venezuela
-Euseagri$Country <-gsub("Venezuela (Bolivarian Republic of)", "Venezuela", 
-                        Euseagri$Country, fixed=TRUE)
-#) b) Subset to LA relevant countries
-Euseagri <-subset(Euseagri, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                    Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                    Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                    Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                    Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                    Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                    Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
-
-#) Remove unnecessary columns
-Euseagri[,1:3]<- list(NULL)
-Euseagri[,2:6]<- list(NULL)
-Euseagri[,3]<- list(NULL)
-Euseagri[,4:5]<- list(NULL)
-
-##) Put final name to the column:
-
-colnames(Euseagri) <-c("country","year","Euseagri")
-
-##. V FERTILIZER USE
+##. III FERTILIZER USE
 
 fertuse <- read_excel("input/FAO/fertuse.xlsx")
 
@@ -194,41 +123,7 @@ fertuse[,4:5]<- list(NULL)
 
 colnames(fertuse) <-c("country","year","fertuse")
 
-##. VI EMISSIONS CO2 AGRICULTURE 
-agriCO2 <- read_excel("input/FAO/agriCO2.xlsx")
-
-#) a.0) If needed, Change name "Area" for "Country"
-
-colnames(agriCO2)[colnames(agriCO2)=="Area"] <- "Country"
-
-#) a) change to relevant names
-
-##) a.1. Bolivia
-agriCO2$Country <-gsub("Bolivia (Plurinational State of)", "Bolivia", 
-                       agriCO2$Country, fixed=TRUE)
-##) a.2. Venezuela
-agriCO2$Country <-gsub("Venezuela (Bolivarian Republic of)", "Venezuela", 
-                       agriCO2$Country, fixed=TRUE)
-#) b) Subset to LA relevant countries
-agriCO2 <-subset(agriCO2, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                   Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                   Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                   Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                   Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                   Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                   Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
-
-#) Remove unnecessary columns
-agriCO2[,1:3]<- list(NULL)
-agriCO2[,2:6]<- list(NULL)
-agriCO2[,3]<- list(NULL)
-agriCO2[,4:5]<- list(NULL)
-
-##) Put final name to the column:
-
-colnames(agriCO2) <-c("country","year","agriCO2")
-
-## VII. LANDSHARE
+## IV. LANDSHARE
 
 landshare <- read_excel("input/FAO/landshare.xlsx")
 
@@ -267,113 +162,8 @@ landshare <- spread(landshare, Item, Value)
 
 colnames(landshare) <-c("country","year","agriland","forland")
 
-##. VIII. EMISSIONS INTENSITY. CEREALS EXCLUDING RICE. kg CO2eq/kg product
-
-emiintensity <- read_excel("input/FAO/emiintensity.xlsx")
-
-#) a.0) If needed, Change name "Area" for "Country"
-
-colnames(emiintensity)[colnames(emiintensity)=="Area"] <- "Country"
-
-#) a) change to relevant names
-
-##) a.1. Bolivia
-emiintensity$Country <-gsub("Bolivia (Plurinational State of)", "Bolivia", 
-                            emiintensity$Country, fixed=TRUE)
-##) a.2. Venezuela
-emiintensity$Country <-gsub("Venezuela (Bolivarian Republic of)", "Venezuela", 
-                            emiintensity$Country, fixed=TRUE)
-#) b) Subset to LA relevant countries
-emiintensity <-subset(emiintensity, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                        Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                        Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                        Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                        Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                        Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                        Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
-
-#) Remove unnecessary columns
-emiintensity[,1:3]<- list(NULL)
-emiintensity[,2:6]<- list(NULL)
-emiintensity[,3]<- list(NULL)
-emiintensity[,4:5]<- list(NULL)
-
-##) Put final name to the column:
-
-colnames(emiintensity) <-c("country","year","emintensity")
-
-##. IX MANURE APPLIED TO SOILS (N CONTENT). ALL ANIMALS. KG.  
-
-manure <- read_excel("input/FAO/manure.xlsx")
-
-#) a.0) If needed, Change name "Area" for "Country"
-
-colnames(manure)[colnames(manure)=="Area"] <- "Country"
-
-#) a) change to relevant names
-
-##) a.1. Bolivia
-manure$Country <-gsub("Bolivia (Plurinational State of)", "Bolivia", 
-                      manure$Country, fixed=TRUE)
-##) a.2. Venezuela
-manure$Country <-gsub("Venezuela (Bolivarian Republic of)", "Venezuela", 
-                      manure$Country, fixed=TRUE)
-#) b) Subset to LA relevant countries
-manure <-subset(manure, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                  Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                  Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                  Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                  Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                  Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                  Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
-
-#) Remove unnecessary columns
-manure[,1:3]<- list(NULL)
-manure[,2:6]<- list(NULL)
-manure[,3]<- list(NULL)
-manure[,4:5]<- list(NULL)
-
-##) Put final name to the column:
-
-colnames(manure) <-c("country","year","manure")
-
-##. X FOOD SUPPLY. kcal/capita/day  
-
-foodsupply <- read_excel("input/FAO/foodsupply.xlsx")
-
-#) a.0) If needed, Change name "Area" for "Country"
-
-colnames(foodsupply)[colnames(foodsupply)=="Area"] <- "Country"
-
-#) a) change to relevant names
-
-##) a.1. Bolivia
-foodsupply$Country <-gsub("Bolivia (Plurinational State of)", "Bolivia", 
-                          foodsupply$Country, fixed=TRUE)
-##) a.2. Venezuela
-foodsupply$Country <-gsub("Venezuela (Bolivarian Republic of)", "Venezuela", 
-                          foodsupply$Country, fixed=TRUE)
-#) b) Subset to LA relevant countries
-foodsupply <-subset(foodsupply, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                      Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                      Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                      Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                      Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                      Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                      Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
-
-#) Remove unnecessary columns
-foodsupply[,1:3]<- list(NULL)
-foodsupply[,2:6]<- list(NULL)
-foodsupply[,3]<- list(NULL)
-foodsupply[,4:5]<- list(NULL)
-
-##) Put final name to the column:
-
-colnames(foodsupply) <-c("country","year","foodsup")
-
 ################################. WB DATA.
-## XII. ARABLE LAND (HECTARES)
+## V. ARABLE LAND (HECTARES)
 
 wbarableland <- read_excel("input/WB/wbarableland.xlsx")
 
@@ -411,158 +201,6 @@ wbarableland <-gather(wbarableland, Year, Value, 2:58)
 ## d) Colnames
 colnames(wbarableland) <-c("country","year","arabland")
 
-## XII. FOOD EXPORTS (% of merchandise exports)
-
-wbfoodexports <- read_excel("input/WB/wbfoodexports.xlsx")
-
-##)A) Remove unwanted columns
-wbfoodexports[,2:5]<- list(NULL)
-##) B) Remove the firs three rows
-wbfoodexports <- wbfoodexports[-c(1, 2, 3), ]
-## C) Change "Data Source" for "Country"
-colnames(wbfoodexports) <-c("Country", "1961","1962","1963","1964","1965","1966","1967","1968","1969","1970",
-                            "1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981",
-                            "1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992",
-                            "1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003",
-                            "2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014",
-                            "2015","2016","2017")
-
-##) a.1. Bolivia
-wbfoodexports$Country <-gsub("Bahamas, The", "Bahamas", 
-                             wbfoodexports$Country, fixed=TRUE)
-##) a.2. Venezuela
-wbfoodexports$Country <-gsub("Venezuela, RB", "Venezuela", 
-                             wbfoodexports$Country, fixed=TRUE)
-#) b) Subset to LA relevant countries
-wbfoodexports <-subset(wbfoodexports, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                         Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                         Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                         Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                         Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                         Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                         Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
-
-##) c) Put in the FAO's column format
-
-wbfoodexports <-gather(wbfoodexports, Year, Value, 2:58)
-
-## d) Colnames
-colnames(wbfoodexports) <-c("country","year","foodexp")
-
-## XIII. FOOD IMPORTS (% of merchandise imports)
-
-wbfoodimports <- read_excel("input/WB/wbfoodimports.xlsx")
-
-##)A) Remove unwanted columns
-wbfoodimports[,2:5]<- list(NULL)
-##) B) Remove the firs three rows
-wbfoodimports <- wbfoodimports[-c(1, 2, 3), ]
-## C) Change "Data Source" for "Country"
-colnames(wbfoodimports) <-c("Country", "1961","1962","1963","1964","1965","1966","1967","1968","1969","1970",
-                            "1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981",
-                            "1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992",
-                            "1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003",
-                            "2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014",
-                            "2015","2016","2017")
-
-##) a.1. Bolivia
-wbfoodimports$Country <-gsub("Bahamas, The", "Bahamas", 
-                             wbfoodimports$Country, fixed=TRUE)
-##) a.2. Venezuela
-wbfoodimports$Country <-gsub("Venezuela, RB", "Venezuela", 
-                             wbfoodimports$Country, fixed=TRUE)
-#) b) Subset to LA relevant countries
-wbfoodimports <-subset(wbfoodimports, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                         Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                         Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                         Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                         Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                         Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                         Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
-
-##) c) Put in the FAO's column format
-
-wbfoodimports <-gather(wbfoodimports, Year, Value, 2:58)
-
-## d) Colnames
-colnames(wbfoodimports) <-c("country","year","foodimp")
-
-## XIV. AGRICULTURE GDP
-
-wbagrigdp <- read_excel("input/WB/wbagrigdp.xlsx")
-
-##)A) Remove unwanted columns
-wbagrigdp[,2:5]<- list(NULL)
-##) B) Remove the firs three rows
-wbagrigdp <- wbagrigdp[-c(1, 2, 3), ]
-## C) Change "Data Source" for "Country"
-colnames(wbagrigdp) <-c("Country", "1961","1962","1963","1964","1965","1966","1967","1968","1969","1970",
-                        "1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981",
-                        "1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992",
-                        "1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003",
-                        "2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014",
-                        "2015","2016","2017")
-
-##) a.1. Bolivia
-wbagrigdp$Country <-gsub("Bahamas, The", "Bahamas", 
-                         wbagrigdp$Country, fixed=TRUE)
-##) a.2. Venezuela
-wbagrigdp$Country <-gsub("Venezuela, RB", "Venezuela", 
-                         wbagrigdp$Country, fixed=TRUE)
-#) b) Subset to LA relevant countries
-wbagrigdp <-subset(wbagrigdp, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                     Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                     Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                     Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                     Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                     Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                     Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
-
-##) c) Put in the FAO's column format
-
-wbagrigdp <-gather(wbagrigdp, Year, Value, 2:58)
-
-## d) Colnames
-colnames(wbagrigdp) <-c("country","year","agrigdp")
-
-## XV. URBAN POPULATION GROWTH (annual %)
-
-wburbanpgrowth <- read_excel("input/WB/wburbanpgrowth.xlsx")
-
-##)A) Remove unwanted columns
-wburbanpgrowth[,2:5]<- list(NULL)
-##) B) Remove the firs three rows
-wburbanpgrowth <- wburbanpgrowth[-c(1, 2, 3), ]
-## C) Change "Data Source" for "Country"
-colnames(wburbanpgrowth) <-c("Country", "1961","1962","1963","1964","1965","1966","1967","1968","1969","1970",
-                             "1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981",
-                             "1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992",
-                             "1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003",
-                             "2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014",
-                             "2015","2016","2017")
-
-##) a.1. Bolivia
-wburbanpgrowth$Country <-gsub("Bahamas, The", "Bahamas", 
-                              wburbanpgrowth$Country, fixed=TRUE)
-##) a.2. Venezuela
-wburbanpgrowth$Country <-gsub("Venezuela, RB", "Venezuela", 
-                              wburbanpgrowth$Country, fixed=TRUE)
-#) b) Subset to LA relevant countries
-wburbanpgrowth <-subset(wburbanpgrowth, Country=="Argentina"|Country=="Bahamas"|Country=="Belize"|Country=="Bolivia"|
-                          Country=="Brazil"|Country=="Chile"|Country=="Colombia"|Country=="Costa Rica"|
-                          Country=="Cuba"|Country=="Dominican Republic"|Country=="Ecuador"|Country=="El Salvador"|
-                          Country=="French Guiana"|Country=="Guatemala"|Country=="Guyana"|Country=="Haiti"|
-                          Country=="Honduras"|Country=="Jamaica"|Country=="Mexico"|Country=="Nicaragua"|
-                          Country=="Panama"|Country=="Paraguay"|Country=="Peru"|Country=="Puerto Rico"|
-                          Country=="Suriname"|Country=="Trinidad and Tobago"| Country=="Uruguay" | Country=="Venezuela")
-
-##) c) Put in the FAO's column format
-
-wburbanpgrowth <-gather(wburbanpgrowth, Year, Value, 2:58)
-
-## d) Colnames
-colnames(wburbanpgrowth) <-c("country","year","gpurban")
-
 ### To get fertilizer use per hectare of arable land (fertuse*1,000)
 ## a) Transform from tonnes to kg
 fertuse$fertuse <- fertuse$fertuse * 1000
@@ -577,6 +215,7 @@ fertuse <-merge(fertuse, wbarableland, all.x=FALSE, all.y=TRUE)
 ##) D) Use transform to divide one column by the other.
 
 fertuse <- transform(fertuse, fertha = fertuse / arabland)
+
 
 ## XV. Fertilizer Use, WB. Kg/Ha
 
@@ -763,124 +402,31 @@ temp$country <-gsub("VEN", "Venezuela",
 
 ####### MERGE DATASETS 
 
-final <-merge(manure, landshare, all.x=TRUE, all.y=TRUE)
-
-final <-merge(final, sfertCO2eeq, all.x=TRUE, all.y=TRUE)
-
-final <-merge(final, emiintensity, all.x =TRUE, all.y=TRUE)
-
-final <-merge(final, Euseagri, all.x =TRUE, all.y=TRUE)
-
-final <-merge(final, foodyield, all.x =TRUE, all.y=TRUE)
-
-final <-merge(final, agriCO2, all.x =TRUE, all.y=TRUE)
-
-final <-merge(final, foodsupply, all.x =TRUE, all.y=TRUE)
-
+# MERGING DATASETS
+final <-merge(landshare, foodyield, all.x=TRUE, all.y=TRUE)
 final <-merge(final, tractoruse, all.x =TRUE, all.y=TRUE)
-
 final <-merge(final, wbfertuse, all.x =TRUE, all.y=TRUE)
-
-final <-merge(final, wbagrigdp, all.x =TRUE, all.y=TRUE)
-
-final <-merge(final, wbfoodimports, all.x =TRUE, all.y=TRUE)
-
-final <-merge(final, wbfoodexports, all.x =TRUE, all.y=TRUE)
-
-final <-merge(final, wburbanpgrowth, all.x =TRUE, all.y=TRUE)
-
 final <-merge(final, rain, all.x =TRUE, all.y =TRUE)
-
 final <-merge(final, temp, all.x=TRUE, all.y=TRUE)
 
-### Remove Bahamas and French Guiana given the amount of missing values.
+### Remove selected countries given the amount of missing values.
 
 final <-subset(final, country!="Bahamas" & country!="French Guiana" & country!="Guyana" & country!="Suriname"
                & country!= "Trinidad and Tobago" & country!="Puerto Rico")
 ## Transform to numeric the WB columns that are charecters.
-as.numeric(final$agrigdp)
-final$agrigdp <- as.numeric(final$agrigdp)
 as.numeric(final$year)
 final$year <- as.numeric(final$year)
 as.numeric(final$year)
 final$foodimp <- as.numeric(final$foodimp)
-as.numeric(final$foodexp)
-final$foodexp <- as.numeric(final$foodexp)
-as.numeric(final$gpurban)
-final$gpurban <- as.numeric(final$gpurban)
 factor(final$country)
 final$country <-factor(final$country)
 as.numeric(final$tractoruse)
 final$tractoruse <- as.numeric(final$tractoruse)
 ## Rename wbfert for fertuse
 colnames(final)[colnames(final)=="wbfert"] <- "fertuse"
-## Remove some for Stats project. Might be relevant for master's paper.
-final$agriCO2 <-NULL
-final$sfertCO2eeq <-NULL
-final$ysgcane <-NULL
-final$foodsup <-NULL
-final$foodimp <-NULL
-final$foodexp <-NULL
-final$manure <-NULL
-final$agrigdp <-NULL
-final$gpurban <-NULL
-final$emintensity <-NULL
-final$Euseagri <-NULL
+
 ## Remove years 2016 and 2017 due to missing values
 final <-subset(final, year<2016)
 
-## Include fertuse and yield (maize+beans) columns as percentage change(for main graph scales).Aaron correction.
-# a) Fertilizer use
-final$pfertuse <-ifelse(final$country=="Argentina", 0.8733129, 
-                      ifelse(final$country=="Belize", 10,
-                             ifelse(final$country=="Bolivia", 0.618238,
-                                    ifelse(final$country=="Brazil", 12.2074329,
-                                           ifelse(final$country=="Chile", 12.7054945,
-                                                  ifelse(final$country=="Colombia", 20.1019253,
-                                                         ifelse(final$country=="Costa Rica",65.5684211,
-                                                                ifelse(final$country=="Cuba", 72.4137931,
-                                                                       ifelse(final$country=="Dominican Republic", 19.4402778,
-                                                                              ifelse(final$country=="Ecuador", 6.4498534,
-                                                                                     ifelse(final$country=="El Salvador", 42.2356557,
-                                                                                            ifelse(final$country=="Guatemala", 13.7045455,
-                                                                                                   ifelse(final$country=="Haiti", 0.1111111,
-                                                                                                          ifelse(final$country=="Honduras", 4.3289575,
-                                                                                                                 ifelse(final$country=="Jamaica", 81.3614458,
-                                                                                                                        ifelse(final$country=="Mexico", 9.7913569,
-                                                                                                                               ifelse(final$country=="Nicaragua", 3.9466019,
-                                                                                                                                      ifelse(final$country=="Panama", 11.4155251,
-                                                                                                                                             ifelse(final$country=="Paraguay", 0.8571429,
-                                                                                                                                                    ifelse(final$country=="Peru", 50.9136971,
-                                                                                                                                                           ifelse(final$country=="Uruguay", 9.2502037,
-                                                                                                                                                                  ifelse(final$country=="Venezuela", 6.5517241, 2))))))))))))))))))))))
-final <- transform(final, pfertuse = fertuse / pfertuse)
-#) B) Yield of maize + beans
-#) B.1) add combined yield
-final$yield <-final$ymaize+final$ybeans
-# B.2) Nest
-final$pyield <-ifelse(final$country=="Argentina", 28273, 
-                        ifelse(final$country=="Belize", 11225,
-                               ifelse(final$country=="Bolivia", 15834,
-                                      ifelse(final$country=="Brazil", 19883,
-                                             ifelse(final$country=="Chile", 29236,
-                                                    ifelse(final$country=="Colombia", 16045,
-                                                           ifelse(final$country=="Costa Rica", 14223,
-                                                                  ifelse(final$country=="Cuba", 14241,
-                                                                         ifelse(final$country=="Dominican Republic", 20860,
-                                                                                ifelse(final$country=="Ecuador", 12018,
-                                                                                       ifelse(final$country=="El Salvador", 14160,
-                                                                                              ifelse(final$country=="Guatemala", 14717,
-                                                                                                     ifelse(final$country=="Haiti", 14577,
-                                                                                                            ifelse(final$country=="Honduras", 16381,
-                                                                                                                   ifelse(final$country=="Jamaica", 11133,
-                                                                                                                          ifelse(final$country=="Mexico", 14407,
-                                                                                                                                 ifelse(final$country=="Nicaragua", 16137,
-                                                                                                                                        ifelse(final$country=="Panama", 10746,
-                                                                                                                                               ifelse(final$country=="Paraguay", 20009,
-                                                                                                                                                      ifelse(final$country=="Peru", 22944,
-                                                                                                                                                             ifelse(final$country=="Uruguay", 13717,
-                                                                                                                                                                    ifelse(final$country=="Venezuela", 15707, 2))))))))))))))))))))))
-final <- transform(final, pyield = yield / pyield)
-
-#### Save data
+#Save dataset in output directory
 save(final, file="output/analytical_data.RData")
