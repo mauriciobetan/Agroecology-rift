@@ -417,7 +417,6 @@ final <-subset(final, country!="Bahamas" & country!="French Guiana" & country!="
 as.numeric(final$year)
 final$year <- as.numeric(final$year)
 as.numeric(final$year)
-final$foodimp <- as.numeric(final$foodimp)
 factor(final$country)
 final$country <-factor(final$country)
 as.numeric(final$tractoruse)
