@@ -11,6 +11,7 @@ load("output/analytical_data.RData")
 final$time <-ifelse(final$year>= 1995, 1, 0) # Adjusted from 1991 to 1999
 # Create dummy variable for Cuba, country exposed to "treatment"
 final$cuba <-ifelse(final$country =="Cuba", 1, 0)
+# Combine maize and beans yield
 final$yield <-final$ymaize+final$ybeans
 ```
 
