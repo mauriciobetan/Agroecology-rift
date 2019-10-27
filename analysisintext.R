@@ -9,14 +9,14 @@ load("output/analytical_data.RData")
 ## Figure 1. 
 #. i. Fertilizer use in Cuba from 1961 to 1991.
 #a) Cuba
-cuba <-subset(final, country==“Cuba”)
+cuba <-subset(final, country=="Cuba")
 mean(subset(cuba$fertuse, cuba$year<=1991), na.rm=TRUE)
 sd(subset(cuba$fertuse, cuba$year<=1991), na.rm=TRUE)
 #a.1) After USSR
 mean(subset(cuba$fertuse, cuba$year>1991), na.rm=TRUE)
 sd(subset(cuba$fertuse, cuba$year>1991), na.rm=TRUE)
 #b) Control group
-restla <-subset(final, country!=“Cuba”)
+restla <-subset(final, country!="Cuba")
 mean(subset(restla $fertuse, restla $year<=1991), na.rm=TRUE)
 sd(subset(restla $fertuse, restla $year<=1991), na.rm=TRUE)
 #b.1) After USSR
