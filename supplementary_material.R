@@ -7,7 +7,7 @@ source("useful_functions.R")
 
 ## Download new dataset from FAO that has data on all crops. 
 
-load(output/"analytical_data.RData")
+load("output/analytical_data.RData")
 totalyields <- read_excel("input/supplementary/totalyields.xlsx")
 
 #) a.0) If needed, Change name "Area" for "Country"
@@ -58,7 +58,7 @@ totalyields$yield <- rowSums(totalyields[,c("cereal","citrus","grain","fibre","f
                                             "treenuts","vegetables")], na.rm=TRUE)
 ### Remove Uruguay and Venezuela due to the lack of data
 totalyields <-subset(totalyields, country!="Uruguay"&country!="Venezuela")
-save(totalyields, file="ytotal.RData")
+
 
 ### Downloads variables that control for fuel (and energy use in general), and merges it to the original dataset 
 
@@ -96,8 +96,8 @@ colnames(energyagri) <-c("country","year","energy")
 
 ### ) Mrege with final dataset
 
-ytotal<-merge(ytotal, energyagri, all.x =TRUE, all.y=TRUE)
-save(ytotal, file="ytotal.RData")
+ytotal<-merge(totalyields, energyagri, all.x =TRUE, all.y=FALSE)
+
 
 #### only energy of fuel oil and for irrigation
 
@@ -138,16 +138,17 @@ colnames(energyagri2) <-c("country","year","irrigation","fuel","irrifuel")
 
 ### Merge
 
-ytotal <-merge(ytotal, energyagri2, all.x =TRUE, all.y=TRUE)
-## SAVE
-save(ytotal, file="ytotal.RData")
-
+ytotal <-merge(ytotal, energyagri2, all.x =TRUE, all.y=FALSE)
+ytotal <-subset(ytotal, country!="Puerto Rico"&country!="Bahamas"&country!="French Guiana"
+                &country!="Guyana"&country!="Suriname")
+# Turn into usable dataset
+final <-ytotal
 ###########################################################################################################################
 ###### Tables and figures 
 ### code for generating table while controlling also for fuel (energy use in general).
 
-```{r regression_template1, echo=FALSE, fig.show = "hold", results='asis', error=FALSE, message=FALSE}
-# Code for generating Table 1
+##{r regression_template1, echo=FALSE, fig.show = "hold", results='asis', error=FALSE, message=FALSE}
+# Code for generating Table 1. CONTROLLING FOR TOTAL ENERGY
 model.maize <-panelAR(log(ymaize)~fertuse+time+(fertuse*time)+(fertuse*cuba)+(time*cuba)+(fertuse*time*cuba)+
                         country+agriland+tractoruse+(rain*temp)+energy, panelVar="country", timeVar="year", 
                       autoCorr= "ar1", panelCorrMethod= "pcse", data=final)
@@ -179,11 +180,11 @@ texreg(lapply(list(model.maize, model.beans, model.yield), convertpanelAR),
        digits=3,
        caption="OLS diff-in-diff-in-diff regressions estimating the relationship between industrial agriculture practices and yield in Cuba relative to the rest of LAC from 1961 to 1995, and assessing if the post-Soviet transition to agroecology in Cuba decoupled these practices from yield in comparison to the control group.",
        caption.above = TRUE)
-```
+###
 
 ### Code for generating table with yield of all crops, and controlling for energy use. 
 
-```{r regression_template2, echo=FALSE, fig.show = "hold", results='asis', error=FALSE, message=FALSE}
+###{r regression_template2, echo=FALSE, fig.show = "hold", results='asis', error=FALSE, message=FALSE}
 
 model.cereal <-panelAR(log(cereal)~fertuse+time+(fertuse*time)+(fertuse*cuba)+(time*cuba)+(fertuse*time*cuba)+
                          country+agriland+tractoruse+(rain*temp)+energy, panelVar="country", timeVar="year", 
@@ -243,10 +244,10 @@ texreg(scalebox = 0.7, lapply(list(model.cereal, model.citrus, model.grain, mode
        post-Soviet transition to agroecology in Cuba decoupled these practices from yield in comparison
        to the control group.",
        caption.above = TRUE)
-```
+###
 ### Code controlling for fuel and energy in irrigation only (not full energy use), for the original dependent variable
 
-```{r regression_template3, echo=FALSE, fig.show = "hold", results='asis', error=FALSE, message=FALSE}
+###{r regression_template3, echo=FALSE, fig.show = "hold", results='asis', error=FALSE, message=FALSE}
 # Code for generating Table 1
 model.maize <-panelAR(log(ymaize)~tractoruse+time+(fertuse*time)+(fertuse*cuba)+(time*cuba)+(fertuse*time*cuba)+
                         country+agriland+fertuse+(rain*temp)+irrifuel, panelVar="country", timeVar="year", 
@@ -279,11 +280,11 @@ texreg(lapply(list(model.maize, model.beans, model.yield), convertpanelAR),
        digits=3,
        caption="OLS diff-in-diff-in-diff regressions estimating the relationship between industrial agriculture practices and yield in Cuba relative to the rest of LAC from 1961 to 1995, and assessing if the post-Soviet transition to agroecology in Cuba decoupled these practices from yield in comparison to the control group.",
        caption.above = TRUE)
-```
+###
 
 # Code for generating Table 1 with all crops included, without adding new variables
 
-```{r regression_template4, echo=FALSE, fig.show = "hold", results='asis', error=FALSE, message=FALSE}
+###{r regression_template4, echo=FALSE, fig.show = "hold", results='asis', error=FALSE, message=FALSE}
 
 model.cereal <-panelAR(log(cereal)~fertuse+time+(fertuse*time)+(fertuse*cuba)+(time*cuba)+(fertuse*time*cuba)+
                          country+agriland+tractoruse+(rain*temp), panelVar="country", timeVar="year", 
@@ -342,7 +343,7 @@ texreg(scalebox = 0.7, lapply(list(model.cereal, model.citrus, model.grain, mode
        post-Soviet transition to agroecology in Cuba decoupled these practices from yield in comparison
        to the control group.",
        caption.above = TRUE)
-```
+###
 
 ##### CODE FOR SUPPLEMENTARY FIGURES
 ##### new graphs with total production (not just maize and beans)
